@@ -1,0 +1,74 @@
+ПМ.07, вариант 05 (гостиница). Этап 1-3: подключение, загрузка, контрольные значения.
+Среда: Debian 12, MariaDB 10.11.6, клиент mariadb, база pm07_v05.
+
+student@debian:~/pm07$ mariadb --defaults-file=auth/client.cnf --database=pm07_v05 --execute="SOURCE input.sql"
+student@debian:~/pm07$ echo $?
+0
+
+student@debian:~/pm07$ mariadb --defaults-file=auth/client.cnf --database=pm07_v05 --table \
+    --execute="SHOW TABLES;"
++--------------------+
+| Tables_in_pm07_v05 |
++--------------------+
+| access_probe       |
+| bookings           |
+| guests             |
+| rooms              |
++--------------------+
+
+student@debian:~/pm07$ mariadb --defaults-file=auth/client.cnf --database=pm07_v05 --table \
+    --execute="SELECT ... COUNT(*), SUM(id), SUM(amount) ..."
++------------+-----------+--------+------------+
+| table_name | row_count | id_sum | amount_sum |
++------------+-----------+--------+------------+
+| rooms      |         4 |     10 |     100.00 |
+| guests     |         4 |     10 |     100.00 |
+| bookings   |         4 |     10 |     100.00 |
++------------+-----------+--------+------------+
+
+student@debian:~/pm07$ mariadb --defaults-file=auth/client.cnf --database=pm07_v05 --table \
+    --execute="SELECT id, name, event_at, amount, link_id, quantity, expires_on FROM rooms ORDER BY id;"
++----+---------+---------------------+--------+---------+----------+------------+
+| id | name    | event_at            | amount | link_id | quantity | expires_on |
++----+---------+---------------------+--------+---------+----------+------------+
+|  1 | rooms 1 | 2026-11-04 09:00:00 |  10.00 |       1 |        1 | 2026-11-10 |
+|  2 | rooms 2 | 2026-11-03 12:00:00 |  20.00 |       2 |        2 | 2026-11-20 |
+|  3 | rooms 3 | 2026-07-01 12:00:00 |  30.00 |       3 |        3 | 2026-11-07 |
+|  4 | rooms 4 | 2026-11-05 12:00:00 |  40.00 |       4 |        4 | 2026-12-10 |
++----+---------+---------------------+--------+---------+----------+------------+
+
+student@debian:~/pm07$ mariadb --defaults-file=auth/client.cnf --database=pm07_v05 --table \
+    --execute="SELECT id, name, event_at, amount, link_id, quantity, expires_on FROM guests ORDER BY id;"
++----+----------+---------------------+--------+---------+----------+------------+
+| id | name     | event_at            | amount | link_id | quantity | expires_on |
++----+----------+---------------------+--------+---------+----------+------------+
+|  1 | guests 1 | 2026-11-04 09:00:00 |  10.00 |       1 |        1 | 2026-11-10 |
+|  2 | guests 2 | 2026-11-03 12:00:00 |  20.00 |       2 |        2 | 2026-11-20 |
+|  3 | guests 3 | 2026-07-01 12:00:00 |  30.00 |       3 |        3 | 2026-11-07 |
+|  4 | guests 4 | 2026-11-05 12:00:00 |  40.00 |       4 |        4 | 2026-12-10 |
++----+----------+---------------------+--------+---------+----------+------------+
+
+student@debian:~/pm07$ mariadb --defaults-file=auth/client.cnf --database=pm07_v05 --table \
+    --execute="SELECT id, name, event_at, amount, link_id, quantity, expires_on FROM bookings ORDER BY id;"
++----+------------+---------------------+--------+---------+----------+------------+
+| id | name       | event_at            | amount | link_id | quantity | expires_on |
++----+------------+---------------------+--------+---------+----------+------------+
+|  1 | bookings 1 | 2026-11-04 09:00:00 |  10.00 |       1 |        1 | 2026-11-10 |
+|  2 | bookings 2 | 2026-11-03 12:00:00 |  20.00 |       2 |        2 | 2026-11-20 |
+|  3 | bookings 3 | 2026-07-01 12:00:00 |  30.00 |       3 |        3 | 2026-11-07 |
+|  4 | bookings 4 | 2026-11-05 12:00:00 |  40.00 |       4 |        4 | 2026-12-10 |
++----+------------+---------------------+--------+---------+----------+------------+
+
+student@debian:~/pm07$ mariadb --defaults-file=auth/client.cnf --database=pm07_v05 --table \
+    --execute="SELECT id, value FROM access_probe;"
++----+-------+
+| id | value |
++----+-------+
+|  1 |    10 |
++----+-------+
+
+student@debian:~/pm07$ mariadb --version
+mariadb from 10.11.6-MariaDB, client 15.2 Distrib 10.11.6, for debian-linux-gnu (x86_64)
+student@debian:~/pm07$ mariadb --defaults-file=auth/client.cnf --database=pm07_v05 --batch \
+    --execute="SELECT VERSION(), CURRENT_USER(), DATABASE();"
+10.11.6-MariaDB	admin@%	pm07_v05
